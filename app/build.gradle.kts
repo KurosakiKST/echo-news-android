@@ -28,8 +28,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "NEWS_API_KEY", "\"${localProperties.getProperty("tmdb.api.key", "")}\"")
     }
 
     buildTypes {
@@ -58,10 +56,13 @@ android {
 }
 
 dependencies {
+    // Modules
+    implementation(project(":core"))
+    implementation(project(":feature"))
+
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
 
     // Compose
@@ -70,7 +71,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
     // Hilt for Dependency Injection
@@ -78,31 +78,8 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
 
-    // Coroutines for Reactive Programming
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Retrofit for API calls
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.logging.interceptor)
-
-    // Room for local database
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    // Coil for image loading
-    implementation(libs.coil.compose)
-
-    // DataStore for preferences
-    implementation(libs.androidx.datastore.preferences)
-
     // Testing
     testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockk)
-
-    // Android Testing
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
