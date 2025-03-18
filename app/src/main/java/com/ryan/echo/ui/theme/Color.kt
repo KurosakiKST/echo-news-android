@@ -1,4 +1,4 @@
-package com.ryan.echo.presentation.common.theme
+package com.ryan.echo.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

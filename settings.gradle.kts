@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Echo"
 include(":app")
- 
+include(":core")
+include(":feature")
