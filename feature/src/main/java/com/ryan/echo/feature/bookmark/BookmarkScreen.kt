@@ -13,24 +13,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ryan.echo.feature.components.ArticleItem
 import com.ryan.echo.feature.components.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookmarkScreen(
-    viewModel: BookmarkViewModel = hiltViewModel(),
+    state: BookmarkState,
+    onEvent: (BookmarkEvent) -> Unit,
     onArticleClick: (String) -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,7 +46,7 @@ fun BookmarkScreen(
             } else if (state.error != null) {
                 ErrorMessage(
                     message = state.error,
-                    onRetry = { viewModel.onEvent(BookmarkEvent.LoadBookmarks) },
+                    onRetry = { onEvent(BookmarkEvent.LoadBookmarks) },
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else if (state.bookmarkedArticles.isEmpty()) {
@@ -72,7 +68,7 @@ fun BookmarkScreen(
                             article = article,
                             onArticleClick = { onArticleClick(article.id) },
                             onBookmarkClick = { isBookmarked ->
-                                viewModel.onEvent(
+                                onEvent(
                                     BookmarkEvent.BookmarkArticle(
                                         articleId = article.id,
                                         isBookmarked = isBookmarked

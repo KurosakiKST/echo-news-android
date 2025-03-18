@@ -20,24 +20,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ryan.echo.feature.components.ArticleItem
 import com.ryan.echo.feature.components.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel = hiltViewModel(),
+    state: SearchState,
+    onEvent: (SearchEvent) -> Unit,
     onArticleClick: (String) -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
 
     Scaffold { paddingValues ->
@@ -49,10 +45,10 @@ fun SearchScreen(
             SearchBar(
                 query = state.query,
                 onQueryChange = {
-                    viewModel.onEvent(SearchEvent.UpdateQuery(it))
+                    onEvent(SearchEvent.UpdateQuery(it))
                 },
                 onSearch = {
-                    viewModel.onEvent(SearchEvent.PerformSearch)
+                    onEvent(SearchEvent.PerformSearch)
                     focusManager.clearFocus()
                 },
                 active = state.isSearching,
@@ -71,7 +67,7 @@ fun SearchScreen(
                 trailingIcon = {
                     if (state.query.isNotEmpty()) {
                         IconButton(
-                            onClick = { viewModel.onEvent(SearchEvent.ClearSearch) }
+                            onClick = { onEvent(SearchEvent.ClearSearch) }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
@@ -104,7 +100,7 @@ fun SearchScreen(
                 } else if (state.error != null) {
                     ErrorMessage(
                         message = state.error,
-                        onRetry = { viewModel.onEvent(SearchEvent.PerformSearch) },
+                        onRetry = { onEvent(SearchEvent.PerformSearch) },
                         modifier = Modifier.align(Alignment.Center)
                     )
                 } else if (state.articles.isEmpty()) {
@@ -124,7 +120,7 @@ fun SearchScreen(
                                 article = article,
                                 onArticleClick = { onArticleClick(article.id) },
                                 onBookmarkClick = { isBookmarked ->
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SearchEvent.BookmarkArticle(
                                             articleId = article.id,
                                             isBookmarked = isBookmarked

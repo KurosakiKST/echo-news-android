@@ -7,10 +7,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ryan.echo.feature.bookmark.BookmarkScreen
+import com.ryan.echo.feature.bookmark.BookmarkRoute
 import com.ryan.echo.feature.detail.DetailRoute
 import com.ryan.echo.feature.home.HomeRoute
-import com.ryan.echo.feature.search.SearchScreen
+import com.ryan.echo.feature.search.SearchRoute
 
 @Composable
 fun EchoNavHost(
@@ -31,7 +31,7 @@ fun EchoNavHost(
         }
 
         composable(Routes.Search.route) {
-            SearchScreen(
+            SearchRoute(
                 onArticleClick = { articleId ->
                     navController.navigate(Routes.Detail.createRoute(articleId))
                 }
@@ -39,7 +39,7 @@ fun EchoNavHost(
         }
 
         composable(Routes.Bookmark.route) {
-            BookmarkScreen(
+            BookmarkRoute(
                 onArticleClick = { articleId ->
                     navController.navigate(Routes.Detail.createRoute(articleId))
                 }
