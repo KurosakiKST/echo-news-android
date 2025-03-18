@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ryan.echo.feature.bookmark.BookmarkScreen
 import com.ryan.echo.feature.detail.DetailScreen
-import com.ryan.echo.feature.home.HomeScreen
+import com.ryan.echo.feature.home.HomeRoute
 import com.ryan.echo.feature.search.SearchScreen
 
 @Composable
@@ -23,7 +23,7 @@ fun EchoNavHost(
         modifier = modifier
     ) {
         composable(Routes.Home.route) {
-            HomeScreen(
+            HomeRoute(
                 onArticleClick = { articleId ->
                     navController.navigate(Routes.Detail.createRoute(articleId))
                 }

@@ -11,38 +11,33 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ryan.echo.feature.components.ArticleItem
 import com.ryan.echo.feature.components.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
+    state: HomeState,
+    onEvent: (HomeEvent) -> Unit,
     onArticleClick: (String) -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
     val pullRefreshState = rememberPullToRefreshState()
 
-    // Handle refresh state
+    // Handle pull to refresh
     if (pullRefreshState.isRefreshing) {
         LaunchedEffect(true) {
-            viewModel.onEvent(HomeEvent.LoadTopHeadlines)
+            onEvent(HomeEvent.LoadTopHeadlines)
         }
     }
 
@@ -74,7 +69,7 @@ fun HomeScreen(
                     item {
                         FilterChip(
                             selected = state.selectedCategory == null,
-                            onClick = { viewModel.onEvent(HomeEvent.SelectCategory(null)) },
+                            onClick = { onEvent(HomeEvent.SelectCategory(null)) },
                             label = { Text("All") }
                         )
                     }
@@ -83,7 +78,7 @@ fun HomeScreen(
                         FilterChip(
                             modifier = Modifier.padding(start = 8.dp),
                             selected = state.selectedCategory == category,
-                            onClick = { viewModel.onEvent(HomeEvent.SelectCategory(category)) },
+                            onClick = { onEvent(HomeEvent.SelectCategory(category)) },
                             label = { Text(category.replaceFirstChar { it.uppercase() }) }
                         )
                     }
@@ -97,20 +92,19 @@ fun HomeScreen(
                     } else if (state.error != null && state.articles.isEmpty()) {
                         ErrorMessage(
                             message = state.error,
-                            onRetry = { viewModel.onEvent(HomeEvent.LoadTopHeadlines) },
+                            onRetry = { onEvent(HomeEvent.LoadTopHeadlines) },
                             modifier = Modifier.align(Alignment.Center)
                         )
                     } else {
                         LazyColumn(
                             contentPadding = PaddingValues(16.dp)
                         ) {
-                            // Articles
                             items(state.articles) { article ->
                                 ArticleItem(
                                     article = article,
                                     onArticleClick = { onArticleClick(article.id) },
                                     onBookmarkClick = { isBookmarked ->
-                                        viewModel.onEvent(
+                                        onEvent(
                                             HomeEvent.BookmarkArticle(
                                                 articleId = article.id,
                                                 isBookmarked = isBookmarked
