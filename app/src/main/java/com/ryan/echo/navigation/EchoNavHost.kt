@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.ryan.echo.feature.bookmark.BookmarkScreen
-import com.ryan.echo.feature.detail.DetailScreen
+import com.ryan.echo.feature.detail.DetailRoute
 import com.ryan.echo.feature.home.HomeRoute
 import com.ryan.echo.feature.search.SearchScreen
 
@@ -55,7 +55,7 @@ fun EchoNavHost(
             )
         ) { backStackEntry ->
             val articleId = backStackEntry.arguments?.getString("articleId") ?: ""
-            DetailScreen(
+            DetailRoute(
                 articleId = articleId,
                 onBackClick = {
                     navController.popBackStack()

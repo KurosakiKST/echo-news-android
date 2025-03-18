@@ -29,14 +29,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.ryan.echo.feature.components.ErrorMessage
@@ -45,11 +42,10 @@ import com.ryan.echo.feature.components.ShimmerBox
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    articleId: String,
-    onBackClick: () -> Unit,
-    viewModel: DetailViewModel = hiltViewModel()
+    state: DetailState,
+    onEvent: (DetailEvent) -> Unit,
+    onBackClick: () -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
     Scaffold(
@@ -69,7 +65,7 @@ fun DetailScreen(
                         // Bookmark button
                         IconButton(
                             onClick = {
-                                viewModel.onEvent(DetailEvent.BookmarkArticle(!article.isBookmarked))
+                                onEvent(DetailEvent.BookmarkArticle(!article.isBookmarked))
                             }
                         ) {
                             Icon(
@@ -132,7 +128,7 @@ fun DetailScreen(
             } else if (state.error != null) {
                 ErrorMessage(
                     message = state.error,
-                    onRetry = { viewModel.onEvent(DetailEvent.LoadArticle(articleId)) },
+                    onRetry = { onEvent(DetailEvent.LoadArticle(state.article?.id ?: "")) },
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
